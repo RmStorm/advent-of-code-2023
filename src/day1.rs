@@ -3,15 +3,6 @@ use nom::{
     character::complete::one_of, combinator::map, error::Error, multi::many1, sequence::preceded,
     sequence::terminated, IResult,
 };
-use std::io::BufRead;
-use std::{fs, io};
-
-fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<fs::File>>>
-where
-    P: AsRef<std::path::Path>,
-{
-    Ok(io::BufReader::new(fs::File::open(filename)?).lines())
-}
 
 const DIGITS: &str = "0123456789";
 
@@ -49,7 +40,7 @@ fn part2(input: &str) -> IResult<&str, Vec<u32>> {
 pub fn main() {
     let mut ans1 = 0;
     let mut ans2 = 0;
-    if let Ok(lines) = read_lines("inputs/day1.txt") {
+    if let Ok(lines) = crate::utils::read_lines("inputs/day1.txt") {
         for line in lines {
             if let Ok(chars) = line {
                 let (_remaining, nums) = part1(&chars).unwrap();
