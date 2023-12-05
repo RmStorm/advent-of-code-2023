@@ -40,7 +40,7 @@ fn part2(input: &str) -> IResult<&str, Vec<u32>> {
 pub fn main() {
     let mut ans1 = 0;
     let mut ans2 = 0;
-    if let Ok(lines) = crate::utils::read_lines("inputs/day1.txt") {
+    if let Ok(lines) = crate::utils::read_lines("src/inputs/day1.txt") {
         for line in lines {
             if let Ok(chars) = line {
                 let (_remaining, nums) = part1(&chars).unwrap();

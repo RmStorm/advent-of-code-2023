@@ -29,9 +29,10 @@ impl Card {
     fn points(&self) -> u64 {
         let count = self.count();
         if count == 0 {
-            return 0;
-        };
-        2_u64.pow((count - 1) as u32)
+            0
+        } else {
+            2_u64.pow((count - 1) as u32)
+        }
     }
 }
 
@@ -60,7 +61,7 @@ fn card_parser(input: &str) -> IResult<&str, Card> {
 pub fn main() {
     let mut ans1 = 0;
     let mut card_counts = vec![];
-    if let Ok(lines) = crate::utils::read_lines("inputs/day4.txt") {
+    if let Ok(lines) = crate::utils::read_lines("src/inputs/day4.txt") {
         for line in lines {
             if let Ok(chars) = line {
                 let (_rest, card) = card_parser(&chars).unwrap();

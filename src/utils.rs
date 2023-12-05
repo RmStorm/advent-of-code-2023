@@ -1,6 +1,7 @@
 use std::io::BufRead;
 use std::{fmt, fs, io};
 
+#[allow(dead_code)]
 pub fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<fs::File>>>
 where
     P: AsRef<std::path::Path>,
@@ -55,26 +56,8 @@ where
     }
 }
 
-#[derive(Debug)]
-pub struct Positioned<T>(pub Vec2, pub T);
-
-impl<T> Map<T>
-where
-    T: Copy,
-{
-    pub fn iter(&self) -> impl Iterator<Item = Positioned<T>> + '_ {
-        (0..self.size.y)
-            .map(move |y| {
-                (0..self.size.x).map(move |x| {
-                    let pos = Vec2 { x, y };
-                    Positioned(pos, self.get(pos).unwrap())
-                })
-            })
-            .flatten()
-    }
-}
-
 impl<T> Map<T> {
+    #[allow(dead_code)]
     fn neighbor_positions(&self, pos: Vec2) -> impl Iterator<Item = Vec2> {
         (-1..=1)
             .map(|dx| (-1..=1).map(move |dy| (dx, dy)))
@@ -87,10 +70,25 @@ impl<T> Map<T> {
     }
 }
 
+#[derive(Debug)]
+pub struct Positioned<T>(pub Vec2, pub T);
+
 impl<T> Map<T>
 where
     T: Copy,
 {
+    #[allow(dead_code)]
+    pub fn iter(&self) -> impl Iterator<Item = Positioned<T>> + '_ {
+        (0..self.size.y)
+            .map(move |y| {
+                (0..self.size.x).map(move |x| {
+                    let pos = Vec2 { x, y };
+                    Positioned(pos, self.get(pos).unwrap())
+                })
+            })
+            .flatten()
+    }
+    #[allow(dead_code)]
     pub fn neighbor_elements(&self, pos: Vec2) -> impl Iterator<Item = T> + '_ {
         self.neighbor_positions(pos)
             .filter_map(move |pos| self.get(pos))

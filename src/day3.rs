@@ -32,7 +32,7 @@ fn parse() -> crate::utils::Map<Point> {
         elements: vec![],
     };
     let mut i = 0usize;
-    if let Ok(lines) = crate::utils::read_lines("inputs/day3.txt") {
+    if let Ok(lines) = crate::utils::read_lines("src/inputs/day3.txt") {
         for line in lines {
             if let Ok(chars) = line {
                 let points = parse_line(&mut i, &chars).unwrap().1;

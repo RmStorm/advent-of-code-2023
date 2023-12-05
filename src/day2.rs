@@ -80,7 +80,7 @@ pub fn main() {
     };
     let mut ans1 = 0;
     let mut ans2 = 0;
-    if let Ok(lines) = crate::utils::read_lines("inputs/day2.txt") {
+    if let Ok(lines) = crate::utils::read_lines("src/inputs/day2.txt") {
         for line in lines {
             if let Ok(chars) = line {
                 let (_remaining, (index, draws)) = game_parser(&chars).unwrap();
