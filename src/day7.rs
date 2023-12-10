@@ -26,27 +26,46 @@ impl fmt::Debug for Hand {
 
 impl Hand {
     fn five(&self) -> bool {
-        self.num(&self.cards[0]) == 5
+        self.cards
+            .iter()
+            .fold(false, |a, c| self.num_j(c) == 5 || a)
     }
     fn four(&self) -> bool {
-        self.cards.iter().fold(false, |a, c| self.num(c) == 4 || a)
+        self.cards
+            .iter()
+            .fold(false, |a, c| self.num_j(c) == 4 || a)
     }
     fn full_house(&self) -> bool {
-        self.three() && self.pair()
+        let p1 = self
+            .cards
+            .iter()
+            .fold((false, '0' as u8), |acc, c| match self.num_j(c) == 3 {
+                true => (true, *c),
+                _ => acc,
+            });
+        let p2 = self.cards.iter().fold((false, '0' as u8), |acc, c| {
+            match self.num(c) == 2 && *c != p1.1 && *c != 'J' as u8 {
+                true => (true, *c),
+                false => acc,
+            }
+        });
+        p1.0 && p2.0
     }
     fn three(&self) -> bool {
-        self.cards.iter().fold(false, |a, c| self.num(c) == 3 || a)
+        self.cards
+            .iter()
+            .fold(false, |a, c| self.num_j(c) == 3 || a)
     }
     fn two_pair(&self) -> bool {
         let p1 = self
             .cards
             .iter()
-            .fold((false, '0' as u8), |acc, c| match self.num(c) == 2 {
+            .fold((false, '0' as u8), |acc, c| match self.num_j(c) == 2 {
                 true => (true, *c),
                 _ => acc,
             });
         let p2 = self.cards.iter().fold((false, '0' as u8), |acc, c| {
-            match self.num(c) == 2 && *c != p1.1 {
+            match self.num(c) == 2 && *c != p1.1 && *c != 1 {
                 true => (true, *c),
                 false => acc,
             }
@@ -54,10 +73,21 @@ impl Hand {
         p1.0 && p2.0
     }
     fn pair(&self) -> bool {
-        self.cards.iter().fold(false, |a, c| self.num(c) == 2 || a)
+        self.cards
+            .iter()
+            .fold(false, |a, c| self.num_j(c) == 2 || a)
     }
     fn num(&self, check_num: &u8) -> usize {
-        self.cards.iter().filter(|&card| card == check_num).count()
+        self.cards
+            .iter()
+            .filter(|&card| card == check_num && *card != 1)
+            .count()
+    }
+    fn num_j(&self, check_num: &u8) -> usize {
+        self.cards
+            .iter()
+            .filter(|&card| card == check_num || *card == 1)
+            .count()
     }
     fn tie_breaker(&self, other: &Self) -> Ordering {
         zip(self.cards, other.cards)
@@ -123,7 +153,7 @@ fn parse_hand(input: &str) -> IResult<&str, Hand> {
                 map(anychar, |d| match d {
                     '2'..='9' => d as u8 - '0' as u8,
                     'T' => 10,
-                    'J' => 11,
+                    'J' => 1,
                     'Q' => 12,
                     'K' => 13,
                     'A' => 14,
@@ -140,6 +170,7 @@ fn parse_hand(input: &str) -> IResult<&str, Hand> {
         },
     )(input)
 }
+
 fn parse_hands(input: &str) -> IResult<&str, Vec<Hand>> {
     separated_list1(line_ending, parse_hand)(input)
 }
@@ -147,11 +178,10 @@ fn parse_hands(input: &str) -> IResult<&str, Vec<Hand>> {
 pub fn main() {
     let input = include_str!("inputs/day7.txt");
     let (_rest, mut hands) = parse_hands(input).unwrap();
-    dbg!(hands.sort());
-    let ans1 = hands
+    hands.sort();
+    let ans = hands
         .iter()
         .enumerate()
         .fold(0, |acc, (i, e)| acc + (i + 1) * e.bid as usize);
-    let ans2 = 0;
-    println!("part1: {}, part2: {}", ans1, ans2);
+    println!("ans: {}", ans);
 }
