@@ -1,6 +1,9 @@
-mod day9;
+#[macro_use]
+extern crate lazy_static;
+
+mod day10;
 mod utils;
 
 fn main() {
-    day9::main()
+    day10::main()
 }

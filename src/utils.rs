@@ -21,25 +21,6 @@ pub struct Map<T> {
     pub elements: Vec<T>,
 }
 
-impl<T> Map<T> {
-    fn index(&self, pos: Vec2) -> Option<usize> {
-        if (0..self.size.x).contains(&pos.x) && (0..self.size.y).contains(&pos.y) {
-            Some((pos.x + pos.y * self.size.x) as _)
-        } else {
-            None
-        }
-    }
-}
-
-impl<T> Map<T>
-where
-    T: Copy,
-{
-    fn get(&self, pos: Vec2) -> Option<T> {
-        self.index(pos).map(|index| self.elements[index])
-    }
-}
-
 impl<T> fmt::Debug for Map<T>
 where
     T: fmt::Debug + Copy,
@@ -57,6 +38,24 @@ where
 }
 
 impl<T> Map<T> {
+    fn index(&self, pos: Vec2) -> Option<usize> {
+        match (0..self.size.x).contains(&pos.x) && (0..self.size.y).contains(&pos.y) {
+            true => Some((pos.x + pos.y * self.size.x) as _),
+            false => None,
+        }
+    }
+}
+
+impl<T> Map<T>
+where
+    T: Copy,
+{
+    pub fn get(&self, pos: Vec2) -> Option<T> {
+        self.index(pos).map(|index| self.elements[index])
+    }
+}
+
+impl<T> Map<T> {
     #[allow(dead_code)]
     fn neighbor_positions(&self, pos: Vec2) -> impl Iterator<Item = Vec2> {
         (-1..=1)
@@ -70,8 +69,17 @@ impl<T> Map<T> {
     }
 }
 
-#[derive(Debug)]
 pub struct Positioned<T>(pub Vec2, pub T);
+
+impl<T> fmt::Debug for Positioned<T>
+where
+    T: fmt::Debug + Copy,
+{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "[{:>2},{:>2}] {:?}", self.0.x, self.0.y, self.1)?;
+        Ok(())
+    }
+}
 
 impl<T> Map<T>
 where
